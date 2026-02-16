@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="theme-color" content="#c8cec8" />
+  <title>ProGolfHelp – Club Selector</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --page-bg:       #c8cec8;
+      --card-bg:       #f0f2f0;
+      --header-bg:     #dde1dd;
+      --row-alt:       #e8ebe8;
+      --border:        #b0bab0;
+      --border-light:  #c4ccc4;
+      --wedge-bg:      #f5edda;
+      --wedge-alt:     #eee4ce;
+      --text:          #111a11;
+      --text-mid:      #2e3e2e;
+      --text-light:    #5a6e5a;
+      --green:         #1a5c28;
+      --green-focus:   #d4e8d8;
+      --amber:         #7c4000;
+      --amber-bg:      #faebd0;
+      --amber-border:  #d4943a;
+      --red:           #b91c1c;
+      --blue:          #1e3a8a;
+      --font-body:     'DM Sans', system-ui, sans-serif;
+      --font-display:  'Barlow Condensed', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--page-bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      -webkit-text-size-adjust: 100%;
+      overflow-x: hidden;
+    }
+
+    /* AUTH SCREEN */
+    #auth-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    .auth-card {
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 36px 28px 32px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+    }
+
+    .auth-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .auth-logo-icon {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1a5c28, #0e3518);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 2px 10px rgba(26,92,40,0.3);
+    }
+
+    .auth-brand-sub {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      color: var(--text-light);
+      text-transform: uppercase;
+      line-height: 1;
+    }
+
+    .auth-brand-main {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      color: var(--green);
+      line-height: 1.05;
+      text-transform: uppercase;
+    }
+
+    .auth-tabs {
+      display: flex;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1.5px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 9px 0;
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: var(--text-light);
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .auth-tab.active {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .auth-tab:first-child { border-right: 1.5px solid var(--border); }
+
+    .form-group { margin-bottom: 16px; }
+
+    .form-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--text-mid);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 15px;
+      font-family: var(--font-body);
+      font-weight: 500;
+      color: var(--text);
+      background: #f8f9f8;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .form-input:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px var(--green-focus);
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 13px;
+      background: var(--green);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity 0.15s;
+    }
+
+    .btn-primary:active { opacity: 0.85; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .auth-msg {
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 500;
+      display: none;
+    }
+
+    .auth-msg.error   { background: #fee2e2; color: #991b1b; display: block; }
+    .auth-msg.success { background: #dcfce7; color: #166534; display: block; }
+
+    /* APP SCREEN */
+    #app-screen { display: none; min-height: 100vh; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--header-bg);
+      border-bottom: 1.5px solid var(--border);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .topbar-brand { display: flex; align-items: center; gap: 10px; }
+
+    .topbar-icon {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1a5c28, #0e3518);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      box-shadow: 0 2px 6px rgba(26,92,40,0.25);
+      flex-shrink: 0;
+    }
+
+    .topbar-sub {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: var(--text-light);
+      text-transform: uppercase;
+      line-height: 1;
+    }
+
+    .topbar-main {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      color: var(--green);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .topbar-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+
+    .unit-toggle {
+      display: flex;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1.5px solid var(--border);
+      background: var(--card-bg);
+    }
+
+    .unit-btn {
+      padding: 5px 11px;
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      background: transparent;
+      color: var(--text-light);
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .unit-btn.active  { background: var(--green); color: #fff; }
+    .unit-btn:first-child { border-right: 1.5px solid var(--border); }
+
+    .btn-sm {
+      padding: 5px 11px;
+      border-radius: 6px;
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      background: var(--card-bg);
+      color: var(--text-mid);
+      transition: background 0.12s;
+    }
+
+    .btn-sm.saving { color: var(--green); border-color: var(--green); }
+
+    .main-content { padding: 14px 12px 56px; max-width: 980px; margin: 0 auto; }
+
+    /* LEGEND */
+    .legend {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+    .legend-swatch { flex-shrink: 0; border-radius: 2px; }
+    .legend-label {
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--text-mid);
+      letter-spacing: 0.07em;
+    }
+
+    /* TABLE */
+    .table-wrap {
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1.5px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .table-inner { min-width: 540px; }
+
+    .table-head {
+      display: grid;
+      grid-template-columns: 26px 1fr 60px 60px 54px 54px minmax(100px,1.3fr);
+      gap: 0 6px;
+      padding: 10px 12px 9px;
+      background: var(--header-bg);
+      border-bottom: 1.5px solid var(--border);
+    }
+
+    .th {
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.13em;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .th.center { text-align: center; }
+    .th.left   { text-align: left;   }
+
+    .table-row {
+      display: grid;
+      grid-template-columns: 26px 1fr 60px 60px 54px 54px minmax(100px,1.3fr);
+      gap: 0 6px;
+      padding: 6px 12px;
+      align-items: center;
+      border-bottom: 1px solid var(--border-light);
+      transition: background 0.1s;
+    }
+
+    .table-row:last-child { border-bottom: none; }
+    .table-row:hover { background: #dce8de !important; }
+    .table-row.wedge-row:hover { background: #f0dfc0 !important; }
+
+    .row-num {
+      font-size: 10px;
+      font-weight: 700;
+      text-align: center;
+      color: var(--text-mid);
+    }
+
+    .row-num.wedge { color: var(--amber); }
+
+    .cell-input, .cell-select {
+      width: 100%;
+      background: #f8f9f8;
+      border: 1.5px solid var(--border);
+      border-radius: 5px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 4px;
+      outline: none;
+      text-align: center;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .cell-select {
+      text-align: left;
+      padding: 5px 22px 5px 7px;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%232e3e2e'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 6px center;
+      background-color: #f8f9f8;
+    }
+
+    .cell-select.wedge-select {
+      background-color: var(--amber-bg);
+      border-color: var(--amber-border);
+      color: var(--amber);
+      font-weight: 700;
+      font-family: var(--font-display);
+      font-size: 13px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%237c4000'/%3E%3C/svg%3E");
+    }
+
+    .cell-input:focus, .cell-select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 2px var(--green-focus);
+    }
+
+    .cell-select.wedge-select:focus {
+      border-color: var(--amber);
+      box-shadow: 0 0 0 2px var(--amber-bg);
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; }
+
+    /* DISPERSION BAR */
+    .spread-wrap { display: flex; flex-direction: column; gap: 2px; }
+    .spread-empty {
+      display: flex; align-items: center; justify-content: center;
+      height: 34px; color: var(--text-light); font-size: 11px;
+    }
+
+    .spread-track {
+      display: flex; align-items: center; height: 18px;
+      position: relative;
+    }
+
+    .spread-half {
+      flex: 1; height: 100%; position: relative;
+      background: #d0d4d0; overflow: hidden;
+    }
+
+    .spread-half.left  { border-radius: 4px 0 0 4px; }
+    .spread-half.right { border-radius: 0 4px 4px 0; }
+
+    .spread-layer {
+      position: absolute;
+      height: 100%;
+      top: 0;
+    }
+
+    .spread-layer.max { opacity: 0.4; }
+    .spread-layer.avg { opacity: 0.7; }
+
+    .spread-pin {
+      width: 2px; height: 22px;
+      flex-shrink: 0; border-radius: 1px;
+      z-index: 10; position: relative;
+    }
+
+    .spread-labels {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 4px;
+    }
+
+    .spread-count {
+      font-size: 8px;
+      font-weight: 700;
+      font-family: var(--font-body);
+    }
+
+    .spread-pct {
+      font-family: var(--font-display);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+    }
+
+    .spread-bias {
+      font-family: var(--font-display);
+      font-size: 8px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* OVERVIEW */
+    .overview-card {
+      margin-top: 14px;
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1.5px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+      padding: 16px 14px;
+    }
+
+    .overview-title {
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      color: var(--text-mid);
+      margin-bottom: 14px;
+      text-transform: uppercase;
+    }
+
+    .ov-row { display: flex; align-items: center; gap: 7px; margin-bottom: 8px; }
+
+    .ov-label {
+      width: 96px;
+      font-size: 9px;
+      font-weight: 700;
+      flex-shrink: 0;
+      text-align: right;
+      color: var(--text-mid);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ov-label.wedge { color: var(--amber); }
+
+    .ov-bar-wrap {
+      flex: 1;
+      height: 18px;
+      display: flex;
+      border-radius: 3px;
+      overflow: hidden;
+      background: #d0d4d0;
+      position: relative;
+    }
+
+    .ov-half { flex: 1; display: flex; position: relative; }
+
+    .ov-layer {
+      position: absolute;
+      height: 100%;
+      top: 0;
+    }
+
+    .ov-layer.max { opacity: 0.4; }
+    .ov-layer.avg { opacity: 0.7; }
+
+    .ov-pin { width: 2px; height: 100%; flex-shrink: 0; z-index: 10; }
+
+    .ov-pct {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 8px;
+      font-weight: 800;
+      font-family: var(--font-display);
+      z-index: 20;
+      white-space: nowrap;
+    }
+
+    #toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #111a11;
+      color: #fff;
+      padding: 11px 22px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+      z-index: 999;
+      white-space: nowrap;
+    }
+
+    #toast.show { transform: translateX(-50%) translateY(0); }
+    #toast.green { background: var(--green); }
+    #toast.red   { background: var(--red);   }
+
+    .user-bar {
+      font-size: 10px;
+      color: var(--text-light);
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 120px;
+    }
+
+    @media (max-width: 400px) {
+      .user-bar { display: none; }
+      .topbar-main { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">⛳</div>
+      <div>
+        <div class="auth-brand-sub">ProGolfHelp</div>
+        <div class="auth-brand-main">Club Selector</div>
+      </div>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Login</button>
+      <button class="auth-tab"        id="tab-signup" onclick="switchTab('signup')">Sign Up</button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" id="auth-email" type="email" placeholder="you@example.com" autocomplete="email" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" id="auth-password" type="password" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+
+    <button class="btn-primary" id="auth-btn" onclick="doAuth()">Login</button>
+
+    <div class="auth-msg" id="auth-msg"></div>
+  </div>
+</div>
+
+<!-- APP SCREEN -->
+<div id="app-screen">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-icon">⛳</div>
+      <div>
+        <div class="topbar-sub">ProGolfHelp</div>
+        <div class="topbar-main">Club Selector</div>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <span class="user-bar" id="user-email-display"></span>
+      <div class="unit-toggle">
+        <button class="unit-btn active" id="btn-m"   onclick="setUnit('m')">M</button>
+        <button class="unit-btn"        id="btn-yds" onclick="setUnit('yds')">YDS</button>
+      </div>
+      <button class="btn-sm" id="save-btn" onclick="saveData()">Save</button>
+      <button class="btn-sm" onclick="signOut()">Logout</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main-content">
+
+    <!-- Legend -->
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-swatch" style="width:16px;height:6px;background:rgba(185,28,28,0.4)"></div>
+        <span class="legend-label">Max left</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="width:16px;height:6px;background:rgba(185,28,28,0.7)"></div>
+        <span class="legend-label">Avg left</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="width:2px;height:14px;background:var(--green)"></div>
+        <span class="legend-label">Centre</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="width:16px;height:6px;background:rgba(30,58,138,0.7)"></div>
+        <span class="legend-label">Avg right</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="width:16px;height:6px;background:rgba(30,58,138,0.4)"></div>
+        <span class="legend-label">Max right</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="width:16px;height:6px;background:var(--amber-bg);border:1px solid var(--amber-border)"></div>
+        <span class="legend-label">Wedge (loft °)</span>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <div class="table-inner">
+        <div class="table-head">
+          <div class="th center">#</div>
+          <div class="th left">CLUB / LOFT</div>
+          <div class="th center" id="th-len">LEN (m)</div>
+          <div class="th center" id="th-max">MAX (m)</div>
+          <div class="th center" id="th-l">L (m)</div>
+          <div class="th center" id="th-r">R (m)</div>
+          <div class="th center">DISPERSION ← · →</div>
+        </div>
+        <div id="table-body"></div>
+      </div>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div class="overview-card">
+      <div class="overview-title">Dispersion Overview</div>
+      <div id="overview-body"></div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────────
+// SUPABASE CREDENTIALS - CONFIGURED
+// ─────────────────────────────────────────────
+const SUPABASE_URL  = 'https://pgbaugeomvkoofjghsds.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBnYmF1Z2VvbXZrb29mamdoc2RzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzExNzA0NzIsImV4cCI6MjA4Njc0NjQ3Mn0.MrwAXZXx8MMTO0rJ9V3sQdi_uzDesyrMA9JhFDgP4SE';
+// ─────────────────────────────────────────────
+
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+// DATA - NOW WITH SHOT ARRAYS
+const STANDARD_CLUBS = [
+  "Driver","3 Wood","4 Wood","5 Wood","7 Wood",
+  "Hybrid 2","Hybrid 3","Hybrid 4","Hybrid 5",
+  "1 Iron","2 Iron","3 Iron","4 Iron","5 Iron",
+  "6 Iron","7 Iron","8 Iron","9 Iron","—"
+];
+
+const WEDGE_DEGREES = Array.from({length:21},(_,i)=>`${42+i}°`);
+
+// EMPTY DEFAULTS - users start with blank slate
+const EMPTY_ROW = {
+  club: "—",
+  isWedge: false,
+  wedgeDeg: "48°",
+  len: 0,
+  max: 0,
+  leftShots: [],   // array of left miss distances
+  rightShots: [],  // array of right miss distances
+};
+
+const DEFAULTS = [
+  {club:"Driver",   isWedge:false, wedgeDeg:"48°", len:0, max:0, leftShots:[], rightShots:[]},
+  {club:"3 Wood",   isWedge:false, wedgeDeg:"48°", len:0, max:0, leftShots:[], rightShots:[]},
+  {club:"5 Wood",   isWedge:false, wedgeDeg:"48°", len:0, max:0, leftShots:[], rightShots:[]},
+  {club:"Hybrid 3", isWedge:false, wedgeDeg:"48°", len:0, max:0, leftShots:[], rightShots:[]},
+  {club:"2 Iron",   isWedge:false, wedgeDeg:"48°", len:0, max:0, leftShots:[], rightShots:[]},
+  {club:"3 Iron",   isWedge:false, wedgeDeg:"48°", len:0, max:0, leftShots:[], rightShots:[]},
+  {club:"4 Iron",   isWedge:false, wedgeDeg:"48°", len:0, max:0, leftShots:[], rightShots:[]},
+  {club:"5 Iron",   isWedge:false, wedgeDeg:"48°", len:0, max:0, leftShots:[], rightShots:[]},
+  {club:"6 Iron",   isWedge:false, wedgeDeg:"48°", len:0, max:0, leftShots:[], rightShots:[]},
+  {club:"7 Iron",   isWedge:false, wedgeDeg:"48°", len:0, max:0, leftShots:[], rightShots:[]},
+  {club:"8 Iron",   isWedge:false, wedgeDeg:"48°", len:0, max:0, leftShots:[], rightShots:[]},
+  {club:"9 Iron",   isWedge:false, wedgeDeg:"48°", len:0, max:0, leftShots:[], rightShots:[]},
+  {club:"—", isWedge:true, wedgeDeg:"48°", len:0, max:0, leftShots:[], rightShots:[]},
+  {club:"—", isWedge:true, wedgeDeg:"52°", len:0, max:0, leftShots:[], rightShots:[]},
+  {club:"—", isWedge:true, wedgeDeg:"56°", len:0, max:0, leftShots:[], rightShots:[]},
+  {club:"—", isWedge:true, wedgeDeg:"60°", len:0, max:0, leftShots:[], rightShots:[]},
+];
+
+let rows = JSON.parse(JSON.stringify(DEFAULTS)); // deep copy
+let unit = 'm';
+let currentUser = null;
+
+// ── STATS CALCULATION ──
+function getStats(row) {
+  const leftShots = row.leftShots || [];
+  const rightShots = row.rightShots || [];
+  
+  const leftMax = leftShots.length > 0 ? Math.max(...leftShots) : 0;
+  const rightMax = rightShots.length > 0 ? Math.max(...rightShots) : 0;
+  
+  const leftAvg = leftShots.length > 0
+    ? Math.round(leftShots.reduce((a,b)=>a+b,0) / leftShots.length)
+    : 0;
+  const rightAvg = rightShots.length > 0
+    ? Math.round(rightShots.reduce((a,b)=>a+b,0) / rightShots.length)
+    : 0;
+  
+  const totalShots = leftShots.length + rightShots.length;
+  const leftPct = totalShots > 0
+    ? Math.round((leftShots.length / totalShots) * 100)
+    : 0;
+  const rightPct = totalShots > 0
+    ? Math.round((rightShots.length / totalShots) * 100)
+    : 0;
+  
+  return {
+    leftMax, rightMax,
+    leftAvg, rightAvg,
+    leftCount: leftShots.length,
+    rightCount: rightShots.length,
+    totalShots,
+    leftPct, rightPct,
+  };
+}
+
+// ── AUTH ──
+let authMode = 'login';
+
+function switchTab(mode) {
+  authMode = mode;
+  document.getElementById('tab-login').classList.toggle('active', mode==='login');
+  document.getElementById('tab-signup').classList.toggle('active', mode==='signup');
+  document.getElementById('auth-btn').textContent = mode==='login' ? 'Login' : 'Create Account';
+  document.getElementById('auth-msg').className = 'auth-msg';
+  document.getElementById('auth-password').autocomplete = mode==='login' ? 'current-password' : 'new-password';
+}
+
+async function doAuth() {
+  const email    = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const btn      = document.getElementById('auth-btn');
+  const msg      = document.getElementById('auth-msg');
+
+  if (!email || !password) { showMsg('Please enter email and password.','error'); return; }
+
+  btn.disabled = true;
+  btn.textContent = authMode==='login' ? 'Logging in…' : 'Creating account…';
+  msg.className = 'auth-msg';
+
+  let result;
+  if (authMode === 'login') {
+    result = await sb.auth.signInWithPassword({ email, password });
+  } else {
+    result = await sb.auth.signUp({ email, password });
+  }
+
+  btn.disabled = false;
+  btn.textContent = authMode==='login' ? 'Login' : 'Create Account';
+
+  if (result.error) {
+    showMsg(result.error.message, 'error');
+  } else if (authMode === 'signup' && !result.data.session) {
+    showMsg('Check your email to confirm your account, then log in.', 'success');
+  } else {
+    currentUser = result.data.user;
+    await loadData();
+    showApp();
+  }
+}
+
+function showMsg(text, type) {
+  const el = document.getElementById('auth-msg');
+  el.textContent = text;
+  el.className = 'auth-msg ' + type;
+}
+
+async function signOut() {
+  await sb.auth.signOut();
+  currentUser = null;
+  document.getElementById('app-screen').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('auth-email').value = '';
+  document.getElementById('auth-password').value = '';
+  document.getElementById('auth-msg').className = 'auth-msg';
+}
+
+function showApp() {
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display  = 'block';
+  document.getElementById('user-email-display').textContent = currentUser?.email || '';
+  render();
+}
+
+// ── SUPABASE DATA ──
+async function loadData() {
+  if (!currentUser) return;
+  const { data, error } = await sb
+    .from('club_data')
+    .select('rows_json, unit')
+    .eq('user_id', currentUser.id)
+    .maybeSingle();
+
+  if (!error && data) {
+    try {
+      const parsed = JSON.parse(data.rows_json);
+      if (Array.isArray(parsed) && parsed.length === 16) {
+        rows = parsed.map(r => ({
+          ...r,
+          leftShots: r.leftShots || [],
+          rightShots: r.rightShots || [],
+        }));
+      }
+    } catch(e) {}
+    if (data.unit === 'm' || data.unit === 'yds') unit = data.unit;
+  }
+}
+
+async function saveData() {
+  if (!currentUser) return;
+  const btn = document.getElementById('save-btn');
+  btn.textContent = 'Saving…';
+  btn.classList.add('saving');
+
+  const { error } = await sb
+    .from('club_data')
+    .upsert({
+      user_id:   currentUser.id,
+      rows_json: JSON.stringify(rows),
+      unit:      unit,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'user_id' });
+
+  btn.textContent = 'Save';
+  btn.classList.remove('saving');
+
+  if (error) {
+    toast('Save failed — check your connection', 'red');
+  } else {
+    toast('Saved ✓', 'green');
+  }
+}
+
+// ── UNIT ──
+function setUnit(u) {
+  unit = u;
+  document.getElementById('btn-m').classList.toggle('active', u==='m');
+  document.getElementById('btn-yds').classList.toggle('active', u==='yds');
+  document.getElementById('th-len').textContent = `LEN (${u})`;
+  document.getElementById('th-max').textContent = `MAX (${u})`;
+  document.getElementById('th-l').textContent   = `L (${u})`;
+  document.getElementById('th-r').textContent   = `R (${u})`;
+  render();
+}
+
+// ── UPDATE ROW ──
+function updateRow(i, field, val) {
+  if (field === 'leftShot') {
+    if (val > 0) rows[i].leftShots.push(val);
+  } else if (field === 'rightShot') {
+    if (val > 0) rows[i].rightShots.push(val);
+  } else {
+    rows[i][field] = val;
+  }
+  renderRow(i);
+  renderOverview();
+}
+
+// ── RENDER ──
+function render() {
+  renderTable();
+  renderOverview();
+}
+
+function renderTable() {
+  const body = document.getElementById('table-body');
+  body.innerHTML = '';
+
+  rows.forEach((row, i) => {
+    const isWedge = row.isWedge;
+    const isEven  = i % 2 === 0;
+    const rowBg   = isWedge
+      ? (isEven ? 'var(--wedge-bg)' : 'var(--wedge-alt)')
+      : (isEven ? 'var(--card-bg)'  : 'var(--row-alt)');
+    const borderLeft = isWedge ? '3px solid var(--amber-border)' : '3px solid transparent';
+
+    const div = document.createElement('div');
+    div.className = 'table-row' + (isWedge ? ' wedge-row' : '');
+    div.style.background  = rowBg;
+    div.style.borderLeft  = borderLeft;
+    div.dataset.rowIndex  = i;
+    div.dataset.rowBg     = rowBg;
+    div.id = `row-${i}`;
+
+    // Row number
+    const numEl = document.createElement('div');
+    numEl.className = 'row-num' + (isWedge ? ' wedge' : '');
+    numEl.textContent = String(i+1).padStart(2,'0');
+    div.appendChild(numEl);
+
+    // Club / Wedge selector
+    const sel = document.createElement('select');
+    sel.className = 'cell-select' + (isWedge ? ' wedge-select' : '');
+    if (isWedge) {
+      WEDGE_DEGREES.forEach(d => {
+        const o = document.createElement('option');
+        o.value = d; o.textContent = d + ' Wedge';
+        if (d === row.wedgeDeg) o.selected = true;
+        sel.appendChild(o);
+      });
+      sel.addEventListener('change', e => updateRow(i, 'wedgeDeg', e.target.value));
+    } else {
+      STANDARD_CLUBS.forEach(c => {
+        const o = document.createElement('option');
+        o.value = c; o.textContent = c;
+        if (c === row.club) o.selected = true;
+        sel.appendChild(o);
+      });
+      sel.addEventListener('change', e => updateRow(i, 'club', e.target.value));
+    }
+    div.appendChild(sel);
+
+    // Len, Max
+    ['len','max'].forEach(field => {
+      const inp = document.createElement('input');
+      inp.type = 'number';
+      inp.className = 'cell-input';
+      inp.min = 0;
+      inp.placeholder = field === 'len' ? 'Carry' : 'Max';
+      inp.value = row[field] || '';
+      inp.addEventListener('blur', e => {
+        const v = parseInt(e.target.value, 10);
+        updateRow(i, field, isNaN(v) ? 0 : Math.max(0, v));
+      });
+      div.appendChild(inp);
+    });
+
+    // Left, Right
+    ['left','right'].forEach(side => {
+      const inp = document.createElement('input');
+      inp.type = 'number';
+      inp.className = 'cell-input';
+      inp.min = 0;
+      inp.placeholder = side.toUpperCase();
+      inp.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+          const v = parseInt(e.target.value, 10);
+          if (!isNaN(v) && v > 0) {
+            updateRow(i, side + 'Shot', v);
+            e.target.value = '';
+          }
+        }
+      });
+      div.appendChild(inp);
+    });
+
+    // Dispersion bar
+    const spreadWrap = document.createElement('div');
+    spreadWrap.id = `spread-${i}`;
+    div.appendChild(spreadWrap);
+
+    body.appendChild(div);
+    renderRow(i);
+  });
+}
+
+function renderRow(i) {
+  const row = rows[i];
+  const el  = document.getElementById(`spread-${i}`);
+  if (!el) return;
+
+  const stats = getStats(row);
+  
+  if (stats.totalShots === 0) {
+    el.innerHTML = `<div class="spread-empty">—</div>`;
+    return;
+  }
+
+  const maxSpread = Math.max(stats.leftMax, stats.rightMax, 1);
+  const leftMaxPct  = (stats.leftMax  / maxSpread) * 100;
+  const rightMaxPct = (stats.rightMax / maxSpread) * 100;
+  const leftAvgPct  = (stats.leftAvg  / maxSpread) * 100;
+  const rightAvgPct = (stats.rightAvg / maxSpread) * 100;
+
+  const bias = (stats.rightCount - stats.leftCount) / stats.totalShots;
+  const biasColor = Math.abs(bias) < 0.12 ? 'var(--green)'
+                  : Math.abs(bias) < 0.35  ? '#b45309'
+                  : 'var(--red)';
+  const biasLabel = Math.abs(bias) < 0.1 ? 'STRAIGHT' : bias > 0 ? 'BIAS R' : 'BIAS L';
+
+  // Distance labels for max and avg
+  const leftMaxLabel = stats.leftMax > 0 ? `${stats.leftMax}${unit}` : '';
+  const leftAvgLabel = stats.leftAvg > 0 ? `${stats.leftAvg}${unit}` : '';
+  const rightMaxLabel = stats.rightMax > 0 ? `${stats.rightMax}${unit}` : '';
+  const rightAvgLabel = stats.rightAvg > 0 ? `${stats.rightAvg}${unit}` : '';
+
+  el.innerHTML = `
+    <div class="spread-wrap">
+      <div class="spread-track" style="position:relative;margin-bottom:4px">
+        <div class="spread-half left">
+          <div class="spread-layer max" style="right:0;width:${leftMaxPct}%;background:rgba(185,28,28,0.4);display:flex;align-items:center;justify-content:flex-start;padding-left:2px">
+            <span style="font-size:7px;font-weight:700;color:var(--red)">${leftMaxLabel}</span>
+          </div>
+          <div class="spread-layer avg" style="right:0;width:${leftAvgPct}%;background:rgba(185,28,28,0.7);display:flex;align-items:center;justify-content:flex-start;padding-left:2px">
+            <span style="font-size:7px;font-weight:700;color:#fff">${leftAvgLabel}</span>
+          </div>
+        </div>
+        <div class="spread-pin" style="background:${biasColor}"></div>
+        <div class="spread-half right">
+          <div class="spread-layer max" style="left:0;width:${rightMaxPct}%;background:rgba(30,58,138,0.4);display:flex;align-items:center;justify-content:flex-end;padding-right:2px">
+            <span style="font-size:7px;font-weight:700;color:var(--blue)">${rightMaxLabel}</span>
+          </div>
+          <div class="spread-layer avg" style="left:0;width:${rightAvgPct}%;background:rgba(30,58,138,0.7);display:flex;align-items:center;justify-content:flex-end;padding-right:2px">
+            <span style="font-size:7px;font-weight:700;color:#fff">${rightAvgLabel}</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:8px;font-weight:700;color:var(--red)">${stats.leftCount} ←</span>
+        <span style="font-size:9px;font-weight:800;font-family:var(--font-display);color:${biasColor};letter-spacing:0.06em">${stats.leftPct}% ← ${biasLabel} → ${stats.rightPct}%</span>
+        <span style="font-size:8px;font-weight:700;color:var(--blue)">→ ${stats.rightCount}</span>
+      </div>
+    </div>`;
+}
+
+function renderOverview() {
+  const body = document.getElementById('overview-body');
+  body.innerHTML = '';
+
+  const clubsWithData = rows
+    .map((r,i) => ({...r, index:i}))
+    .filter(r => (r.club !== '—' || r.isWedge) && (r.leftShots.length > 0 || r.rightShots.length > 0));
+
+  if (clubsWithData.length === 0) {
+    body.innerHTML = '<div style="text-align:center;color:var(--text-light);font-size:11px;padding:20px">No data yet — start tracking shots!</div>';
+    return;
+  }
+
+  const globalMax = Math.max(
+    ...clubsWithData.flatMap(r => {
+      const s = getStats(r);
+      return [s.leftMax, s.rightMax];
+    }),
+    1
+  );
+
+  clubsWithData.forEach(r => {
+    const stats = getStats(r);
+    const label = r.isWedge ? `${r.wedgeDeg} Wedge` : r.club;
+    
+    const leftMaxPct = (stats.leftMax / globalMax) * 100;
+    const rightMaxPct = (stats.rightMax / globalMax) * 100;
+    const leftAvgPct = (stats.leftAvg / globalMax) * 100;
+    const rightAvgPct = (stats.rightAvg / globalMax) * 100;
+
+    const bias = (stats.rightCount - stats.leftCount) / stats.totalShots;
+    const biasColor = Math.abs(bias) < 0.12 ? 'var(--green)'
+                    : Math.abs(bias) < 0.35  ? '#b45309'
+                    : 'var(--red)';
+
+    const leftMaxLabel = stats.leftMax > 0 ? `${stats.leftMax}${unit}` : '';
+    const leftAvgLabel = stats.leftAvg > 0 ? `${stats.leftAvg}${unit}` : '';
+    const rightMaxLabel = stats.rightMax > 0 ? `${stats.rightMax}${unit}` : '';
+    const rightAvgLabel = stats.rightAvg > 0 ? `${stats.rightAvg}${unit}` : '';
+
+    body.innerHTML += `
+      <div class="ov-row">
+        <div class="ov-label${r.isWedge?' wedge':''}">${label}</div>
+        <div class="ov-bar-wrap">
+          <div class="ov-half left">
+            <div class="ov-layer max" style="right:0;width:${leftMaxPct}%;background:rgba(185,28,28,0.4);display:flex;align-items:center;justify-content:flex-start;padding-left:2px">
+              <span style="font-size:7px;font-weight:700;color:var(--red)">${leftMaxLabel}</span>
+            </div>
+            <div class="ov-layer avg" style="right:0;width:${leftAvgPct}%;background:rgba(185,28,28,0.7);display:flex;align-items:center;justify-content:flex-start;padding-left:2px">
+              <span style="font-size:7px;font-weight:700;color:#fff">${leftAvgLabel}</span>
+            </div>
+          </div>
+          <div class="ov-pin" style="background:${biasColor}"></div>
+          <div class="ov-half right">
+            <div class="ov-layer max" style="left:0;width:${rightMaxPct}%;background:rgba(30,58,138,0.4);display:flex;align-items:center;justify-content:flex-end;padding-right:2px">
+              <span style="font-size:7px;font-weight:700;color:var(--blue)">${rightMaxLabel}</span>
+            </div>
+            <div class="ov-layer avg" style="left:0;width:${rightAvgPct}%;background:rgba(30,58,138,0.7);display:flex;align-items:center;justify-content:flex-end;padding-right:2px">
+              <span style="font-size:7px;font-weight:700;color:#fff">${rightAvgLabel}</span>
+            </div>
+          </div>
+          <div class="ov-pct" style="color:${biasColor};background:rgba(255,255,255,0.85);padding:1px 4px;border-radius:3px">${stats.leftPct}% ← | → ${stats.rightPct}%</div>
+        </div>
+      </div>`;
+  });
+}
+
+// ── TOAST ──
+function toast(msg, type='green') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `show ${type}`;
+  setTimeout(() => el.className = '', 2800);
+}
+
+// ── BOOT ──
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session?.user) {
+    currentUser = session.user;
+    await loadData();
+    showApp();
+  }
+
+  sb.auth.onAuthStateChange((_event, session) => {
+    if (!session && document.getElementById('app-screen').style.display === 'block') {
+      signOut();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
