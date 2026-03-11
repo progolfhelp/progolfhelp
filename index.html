@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+not found<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -636,6 +636,7 @@
       </div>
       <button class="btn-sm" id="save-btn" onclick="saveData()">Save</button>
       <button class="btn-sm" onclick="signOut()">Logout</button>
+<button onclick="deleteAccount()" style="background:#d32f2f;margin-top:10px">Delete Account</button>
     </div>
   </div>
 
@@ -838,6 +839,17 @@ function showMsg(text, type) {
 
 async function signOut() {
   await sb.auth.signOut();
+
+async function deleteAccount() {
+  if (!confirm('Are you sure? This will permanently delete your account and all data.')) return;
+  const {data, error} = await sb.from('club_data').delete().eq('user_id', currentUser.id);
+  if (error) { alert('Error deleting data: ' + error.message); return; }
+  await sb.auth.signOut();
+  alert('Account and all data deleted successfully');
+  currentUser = null;
+  document.getElementById('app-screen').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+}
   currentUser = null;
   document.getElementById('app-screen').style.display = 'none';
   document.getElementById('auth-screen').style.display = 'flex';
