@@ -637,7 +637,6 @@ not found<!DOCTYPE html>
       <button class="btn-sm" id="save-btn" onclick="saveData()">Save</button>
       <button class="btn-sm" onclick="signOut()">Logout</button>
 <button class="btn-sm" onclick="if(confirm('Delete account and all data?')){sb.from('club_data').delete().eq('user_id',currentUser.id).then(()=>{sb.auth.signOut();alert('Account deleted');});}" style="background:#d32f2f;margin-top:8px">Delete Account</button>
-<button class="btn-sm" onclick="deleteAccount()" style="background:#d32f2f">Delete Account</button>
     </div>
   </div>
 
