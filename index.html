@@ -636,7 +636,7 @@ not found<!DOCTYPE html>
       </div>
       <button class="btn-sm" id="save-btn" onclick="saveData()">Save</button>
       <button class="btn-sm" onclick="signOut()">Logout</button>
-<button onclick="deleteAccount()" style="background:#d32f2f;margin-top:10px">Delete Account</button>
+<button class="btn-sm" onclick="deleteAccount()" style="background:#d32f2f">Delete Account</button>
     </div>
   </div>
 
@@ -838,6 +838,18 @@ function showMsg(text, type) {
 }
 
 async function signOut() {
+
+async function deleteAccount() {
+  if (!confirm('Delete your account and all data? This cannot be undone.')) return;
+  try {
+    await sb.from('club_data').delete().eq('user_id', currentUser.id);
+    await sb.auth.admin.deleteUser(currentUser.id);
+    alert('Account deleted');
+    await signOut();
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
+}
   await sb.auth.signOut();
 
 async function deleteAccount() {
