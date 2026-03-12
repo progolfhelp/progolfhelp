@@ -435,21 +435,14 @@
 
         function initClubData() {
             clubData = CLUBS.map((c,i) => ({
-                id: i,
-                club: c.club,
-                loft: c.loft,
-                type: c.type,
-                len: 0,
-                max: 0,
-                leftShots: [],
-                rightShots: []
+                id: i, club: c.club, loft: c.loft, type: c.type,
+                len: 0, max: 0, leftShots: [], rightShots: []
             }));
         }
-
         initClubData();
 
         (async function init() {
-            const {data: {session}} = await sb.auth.getSession();
+            const {data:{session}} = await sb.auth.getSession();
             if (session) {
                 currentUser = session.user;
                 await showApp();
@@ -477,7 +470,6 @@
             const loginBtn = document.getElementById('btn-login');
             const signupBtn = document.getElementById('btn-signup');
             const submitBtn = document.getElementById('auth-submit');
-            
             if (mode === 'login') {
                 loginBtn.classList.add('active');
                 signupBtn.classList.remove('active');
@@ -494,21 +486,17 @@
             e.preventDefault();
             const email = document.getElementById('auth-email').value;
             const password = document.getElementById('auth-password').value;
-            
             let result;
             if (authMode === 'login') {
                 result = await sb.auth.signInWithPassword({email, password});
             } else {
                 result = await sb.auth.signUp({email, password});
             }
-            
             if (result.error) {
                 showMsg(result.error.message, 'error');
             } else {
                 currentUser = result.data.user;
-                if (authMode === 'signup') {
-                    showMsg('Account created successfully!', 'success');
-                }
+                if (authMode === 'signup') showMsg('Account created successfully!', 'success');
                 await showApp();
             }
         }
@@ -580,11 +568,8 @@
 
         function updateClub(i, val) {
             clubData[i].club = val;
-            if (val === 'WEDGE') {
-                clubData[i].loft = '48';
-            } else {
-                clubData[i].loft = '';
-            }
+            if (val === 'WEDGE') clubData[i].loft = '48';
+            else clubData[i].loft = '';
             renderTable();
         }
 
@@ -596,10 +581,8 @@
         function renderTable() {
             const tbody = document.getElementById('tbody');
             tbody.innerHTML = '';
-            
             clubData.forEach((row, i) => {
                 const tr = document.createElement('tr');
-                
                 let clubSelect = '';
                 if (row.type === 'wood') {
                     clubSelect = `<select onchange="updateClub(${i}, this.value)">
@@ -618,10 +601,8 @@
                         ${WEDGE_OPTIONS.map(l => `<option value="${l}" ${row.loft===l?'selected':''}>${l}°</option>`).join('')}
                     </select>`;
                 }
-                
                 const stats = getStats(row);
                 const dispHtml = renderDispersionBar(stats);
-                
                 tr.innerHTML = `
                     <td>${clubSelect}</td>
                     <td><input type="number" value="${row.len||''}" onchange="updateVal(${i},'len',this.value)" style="width:70px"></td>
@@ -661,22 +642,18 @@
 
         function renderDispersionBar(stats) {
             if (stats.totalShots === 0) return '<span style="color:#999;font-size:12px">No data</span>';
-            
             const maxVal = Math.max(stats.leftMax, stats.rightMax) || 1;
             const leftMaxPct = (stats.leftMax / maxVal) * 50;
             const rightMaxPct = (stats.rightMax / maxVal) * 50;
             const leftAvgPct = (stats.leftAvg / maxVal) * 50;
             const rightAvgPct = (stats.rightAvg / maxVal) * 50;
-            
             const diff = Math.abs(stats.leftPct - stats.rightPct);
             let biasColor = '#4CAF50';
             if (diff >= 35) biasColor = '#f44336';
             else if (diff >= 12) biasColor = '#FF9800';
-            
             let biasLabel = 'STRAIGHT';
             if (stats.leftPct > stats.rightPct + 5) biasLabel = 'BIAS L';
             if (stats.rightPct > stats.leftPct + 5) biasLabel = 'BIAS R';
-            
             return `
                 <div class="disp-container">
                     <div class="disp-bar">
@@ -695,12 +672,10 @@
         function renderOverview() {
             const container = document.getElementById('overview-graph');
             const withData = clubData.filter(r => (r.leftShots?.length || 0) + (r.rightShots?.length || 0) > 0);
-            
             if (withData.length === 0) {
-                container.innerHTML = '<p style="color:#999;text-align:center;padding:20px">No shot data yet. Add dispersion shots to see the overview.</p>';
+                container.innerHTML = '<p style="color:#999;text-align:center;padding:20px">No shot data yet.</p>';
                 return;
             }
-            
             container.innerHTML = withData.map(row => {
                 const label = row.club + (row.loft ? ` (${row.loft}°)` : '');
                 const stats = getStats(row);
