@@ -229,6 +229,7 @@
             border-radius: 10px;
             overflow: hidden;
             margin-bottom: 24px;
+            table-layout: fixed;
         }
         thead {
             background: #f5f5f5;
@@ -241,12 +242,23 @@
             text-transform: uppercase;
             color: #666;
         }
-        th:first-child {
-            width: 25%;
-        }
+        th:nth-child(1), td:nth-child(1) { width: 140px; }
+        th:nth-child(2), td:nth-child(2) { width: 70px; }
+        th:nth-child(3), td:nth-child(3) { width: 70px; }
+        th:nth-child(4), td:nth-child(4) { width: 70px; }
+        th:nth-child(5), td:nth-child(5) { width: 70px; }
+        th:nth-child(6), td:nth-child(6) { width: auto; }
         td {
             padding: 12px 10px;
             border-top: 1px solid #eee;
+            font-size: 14px;
+        }
+        td:nth-child(1) select {
+            width: 100%;
+            min-width: 120px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
             font-size: 14px;
         }
         select, input[type="number"] {
@@ -528,9 +540,14 @@
 
         async function loadData() {
             const {data, error} = await sb.from('club_data').select('*').eq('user_id', currentUser.id).single();
-            if (data && data.data) {
+            if (data && data.rows_json) {
+                if (data.unit) {
+                    unit = data.unit;
+                    document.getElementById('btn-m').classList.toggle('active', unit === 'm');
+                    document.getElementById('btn-yds').classList.toggle('active', unit === 'yds');
+                }
                 try {
-                    const loaded = JSON.parse(data.data);
+                    const loaded = JSON.parse(data.rows_json);
                     if (Array.isArray(loaded)) {
                         clubData = loaded.slice(0, 13).map((row, i) => ({
                             id: i,
@@ -561,7 +578,8 @@
             try {
                 const payload = {
                     user_id: currentUser.id,
-                    data: JSON.stringify(clubData)
+                    rows_json: JSON.stringify(clubData),
+                    unit: unit
                 };
                 const {error} = await sb.from('club_data').upsert(payload, {onConflict: 'user_id'});
                 if (error) throw error;
@@ -590,19 +608,18 @@
             tbody.innerHTML = '';
             clubData.forEach((row, i) => {
                 const tr = document.createElement('tr');
-                const clubSelect = `<select onchange="updateClub(${i}, this.value)">
-                    ${ALL_CLUBS.map(c => `<option value="${c}" ${row.club===c?'selected':''}>${c}</option>`).join('')}
-                </select>`;
+                const clubSelect = '<select onchange="updateClub(' + i + ', this.value)">' +
+                    ALL_CLUBS.map(c => '<option value="' + c + '" ' + (row.club===c?'selected':'') + '>' + c + '</option>').join('') +
+                    '</select>';
                 const stats = getStats(row);
                 const dispHtml = renderDispersionBar(stats);
-                tr.innerHTML = `
-                    <td>${clubSelect}</td>
-                    <td><input type="number" value="${row.len||''}" onchange="updateVal(${i},'len',this.value)" style="width:70px"></td>
-                    <td><input type="number" value="${row.max||''}" onchange="updateVal(${i},'max',this.value)" style="width:70px"></td>
-                    <td><input type="number" placeholder="0" onkeypress="if(event.key==='Enter'){addShot(${i},'left',this.value);this.value='';}" style="width:60px"></td>
-                    <td><input type="number" placeholder="0" onkeypress="if(event.key==='Enter'){addShot(${i},'right',this.value);this.value='';}" style="width:60px"></td>
-                    <td>${dispHtml}</td>
-                `;
+                tr.innerHTML =
+                    '<td>' + clubSelect + '</td>' +
+                    '<td><input type="number" value="' + (row.len||'') + '" onchange="updateVal(' + i + ',\'len\',this.value)" style="width:56px"></td>' +
+                    '<td><input type="number" value="' + (row.max||'') + '" onchange="updateVal(' + i + ',\'max\',this.value)" style="width:56px"></td>' +
+                    '<td><input type="number" placeholder="0" onkeypress="if(event.key===\'Enter\'){addShot(' + i + ',\'left\',this.value);this.value=\'\';}" style="width:56px"></td>' +
+                    '<td><input type="number" placeholder="0" onkeypress="if(event.key===\'Enter\'){addShot(' + i + ',\'right\',this.value);this.value=\'\';}" style="width:56px"></td>' +
+                    '<td>' + dispHtml + '</td>';
                 tbody.appendChild(tr);
             });
         }
@@ -646,24 +663,19 @@
             let biasLabel = 'STRAIGHT';
             if (stats.leftPct > stats.rightPct + 5) biasLabel = 'BIAS L';
             if (stats.rightPct > stats.leftPct + 5) biasLabel = 'BIAS R';
-            return `
-                <div class="disp-container">
-                    <div class="disp-bar">
-                        <div class="disp-max-l" style="background:#ffcccc;right:50%;width:${leftMaxPct}%"></div>
-                        <div class="disp-max-r" style="background:#ccccff;left:50%;width:${rightMaxPct}%"></div>
-                        <div class="disp-avg-l" style="background:#ff0000;right:50%;width:${leftAvgPct}%"></div>
-                        <div class="disp-avg-r" style="background:#0000ff;left:50%;width:${rightAvgPct}%"></div>
-                        <div class="disp-label" style="color:${biasColor}">
-                            ${conv(stats.leftAvg)}${unit} ← ${stats.leftPct}% ← ${biasLabel} → ${stats.rightPct}% → ${conv(stats.rightAvg)}${unit}
-                        </div>
-                    </div>
-                </div>
-            `;
+            return '<div class="disp-container"><div class="disp-bar">' +
+                '<div class="disp-max-l" style="background:#ffcccc;right:50%;width:' + leftMaxPct + '%"></div>' +
+                '<div class="disp-max-r" style="background:#ccccff;left:50%;width:' + rightMaxPct + '%"></div>' +
+                '<div class="disp-avg-l" style="background:#ff0000;right:50%;width:' + leftAvgPct + '%"></div>' +
+                '<div class="disp-avg-r" style="background:#0000ff;left:50%;width:' + rightAvgPct + '%"></div>' +
+                '<div class="disp-label" style="color:' + biasColor + '">' +
+                conv(stats.leftAvg) + unit + ' \u2190 ' + stats.leftPct + '% \u2190 ' + biasLabel + ' \u2192 ' + stats.rightPct + '% \u2192 ' + conv(stats.rightAvg) + unit +
+                '</div></div></div>';
         }
 
         function renderOverview() {
             const container = document.getElementById('overview-graph');
-            const withData = clubData.filter(r => r.club !== 'Select' && ((r.leftShots?.length || 0) + (r.rightShots?.length || 0) > 0));
+            const withData = clubData.filter(r => r.club !== 'Select' && ((r.leftShots ? r.leftShots.length : 0) + (r.rightShots ? r.rightShots.length : 0) > 0));
             if (withData.length === 0) {
                 container.innerHTML = '<p style="color:#999;text-align:center;padding:20px">No shot data yet.</p>';
                 return;
@@ -671,12 +683,7 @@
             container.innerHTML = withData.map(row => {
                 const stats = getStats(row);
                 const dispHtml = renderDispersionBar(stats);
-                return `
-                    <div style="margin-bottom:16px">
-                        <div style="font-weight:700;margin-bottom:6px;font-size:14px;color:#1a5c28">${row.club}</div>
-                        ${dispHtml}
-                    </div>
-                `;
+                return '<div style="margin-bottom:16px"><div style="font-weight:700;margin-bottom:6px;font-size:14px;color:#1a5c28">' + row.club + '</div>' + dispHtml + '</div>';
             }).join('');
         }
     </script>
