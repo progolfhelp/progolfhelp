@@ -357,12 +357,16 @@
         <div class="main-content">
             <div class="legend">
                 <div class="legend-item">
-                    <div class="legend-box" style="background:#90EE90;opacity:0.3"></div>
+                    <div class="legend-box" style="background:#ffcccc;opacity:0.5"></div>
                     <span>Max Dispersion</span>
                 </div>
                 <div class="legend-item">
-                    <div class="legend-box" style="background:#228B22;opacity:0.7"></div>
-                    <span>Avg Dispersion</span>
+                    <div class="legend-box" style="background:#ff0000;opacity:0.8"></div>
+                    <span>Left Avg</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box" style="background:#0000ff;opacity:0.8"></div>
+                    <span>Right Avg</span>
                 </div>
             </div>
 
@@ -400,13 +404,33 @@
         let unit = 'm';
         let clubData = [];
 
+        const WOOD_OPTIONS = ['DRIVER', '2W', '3W', '4W', '5W', '7W', '9W'];
+        const HYBRID_OPTIONS = ['2I', '3I', '3H', '4H', '5H', '6H', '7H'];
+        const IRON_OPTIONS = ['3I', '4I', '5I', '6I', '7I', '8I', '9I', 'PW'];
+        const WEDGE_OPTIONS = ['48', '50', '52', '54', '56', '58', '60'];
+
         const CLUBS = [
-            {club:'DRIVER',loft:''},{club:'3W',loft:''},{club:'5W',loft:''},{club:'7W',loft:''},
-            {club:'3H',loft:''},{club:'4H',loft:''},{club:'5H',loft:''},
-            {club:'4I',loft:''},{club:'5I',loft:''},{club:'6I',loft:''},{club:'7I',loft:''},
-            {club:'8I',loft:''},{club:'9I',loft:''},{club:'PW',loft:''},
-            {club:'WEDGE',loft:'48'},{club:'WEDGE',loft:'50'},{club:'WEDGE',loft:'52'},
-            {club:'WEDGE',loft:'54'},{club:'WEDGE',loft:'56'},{club:'WEDGE',loft:'58'},{club:'WEDGE',loft:'60'}
+            {club:'DRIVER',loft:'',type:'wood'},
+            {club:'3W',loft:'',type:'wood'},
+            {club:'5W',loft:'',type:'wood'},
+            {club:'7W',loft:'',type:'wood'},
+            {club:'3H',loft:'',type:'hybrid'},
+            {club:'4H',loft:'',type:'hybrid'},
+            {club:'5H',loft:'',type:'hybrid'},
+            {club:'4I',loft:'',type:'iron'},
+            {club:'5I',loft:'',type:'iron'},
+            {club:'6I',loft:'',type:'iron'},
+            {club:'7I',loft:'',type:'iron'},
+            {club:'8I',loft:'',type:'iron'},
+            {club:'9I',loft:'',type:'iron'},
+            {club:'PW',loft:'',type:'iron'},
+            {club:'WEDGE',loft:'48',type:'wedge'},
+            {club:'WEDGE',loft:'50',type:'wedge'},
+            {club:'WEDGE',loft:'52',type:'wedge'},
+            {club:'WEDGE',loft:'54',type:'wedge'},
+            {club:'WEDGE',loft:'56',type:'wedge'},
+            {club:'WEDGE',loft:'58',type:'wedge'},
+            {club:'WEDGE',loft:'60',type:'wedge'}
         ];
 
         function initClubData() {
@@ -414,6 +438,7 @@
                 id: i,
                 club: c.club,
                 loft: c.loft,
+                type: c.type,
                 len: 0,
                 max: 0,
                 leftShots: [],
@@ -553,25 +578,52 @@
             setTimeout(() => t.style.display = 'none', 2000);
         }
 
+        function updateClub(i, val) {
+            clubData[i].club = val;
+            if (val === 'WEDGE') {
+                clubData[i].loft = '48';
+            } else {
+                clubData[i].loft = '';
+            }
+            renderTable();
+        }
+
+        function updateLoft(i, val) {
+            clubData[i].loft = val;
+            renderTable();
+        }
+
         function renderTable() {
             const tbody = document.getElementById('tbody');
             tbody.innerHTML = '';
             
             clubData.forEach((row, i) => {
                 const tr = document.createElement('tr');
-                const loftSelect = row.club === 'WEDGE' 
-                    ? `<select onchange="updateLoft(${i}, this.value)">
-                        ${['48','50','52','54','56','58','60'].map(l => 
-                            `<option value="${l}" ${row.loft===l?'selected':''}>${l}°</option>`
-                        ).join('')}
-                       </select>`
-                    : (row.loft ? `${row.loft}°` : '');
+                
+                let clubSelect = '';
+                if (row.type === 'wood') {
+                    clubSelect = `<select onchange="updateClub(${i}, this.value)">
+                        ${WOOD_OPTIONS.map(c => `<option value="${c}" ${row.club===c?'selected':''}>${c}</option>`).join('')}
+                    </select>`;
+                } else if (row.type === 'hybrid') {
+                    clubSelect = `<select onchange="updateClub(${i}, this.value)">
+                        ${HYBRID_OPTIONS.map(c => `<option value="${c}" ${row.club===c?'selected':''}>${c}</option>`).join('')}
+                    </select>`;
+                } else if (row.type === 'iron') {
+                    clubSelect = `<select onchange="updateClub(${i}, this.value)">
+                        ${IRON_OPTIONS.map(c => `<option value="${c}" ${row.club===c?'selected':''}>${c}</option>`).join('')}
+                    </select>`;
+                } else if (row.type === 'wedge') {
+                    clubSelect = `<select onchange="updateLoft(${i}, this.value)">
+                        ${WEDGE_OPTIONS.map(l => `<option value="${l}" ${row.loft===l?'selected':''}>${l}°</option>`).join('')}
+                    </select>`;
+                }
                 
                 const stats = getStats(row);
                 const dispHtml = renderDispersionBar(stats);
                 
                 tr.innerHTML = `
-                    <td><b>${row.club}</b> ${row.club === 'WEDGE' ? loftSelect : (row.loft ? `(${row.loft}°)` : '')}</td>
+                    <td>${clubSelect}</td>
                     <td><input type="number" value="${row.len||''}" onchange="updateVal(${i},'len',this.value)" style="width:70px"></td>
                     <td><input type="number" value="${row.max||''}" onchange="updateVal(${i},'max',this.value)" style="width:70px"></td>
                     <td><input type="number" placeholder="0" onkeypress="if(event.key==='Enter'){addShot(${i},'left',this.value);this.value='';}" style="width:60px"></td>
@@ -580,11 +632,6 @@
                 `;
                 tbody.appendChild(tr);
             });
-        }
-
-        function updateLoft(i, val) {
-            clubData[i].loft = val;
-            renderTable();
         }
 
         function updateVal(i, field, val) {
@@ -633,10 +680,10 @@
             return `
                 <div class="disp-container">
                     <div class="disp-bar">
-                        <div class="disp-max-l" style="background:#90EE90;right:50%;width:${leftMaxPct}%"></div>
-                        <div class="disp-max-r" style="background:#90EE90;left:50%;width:${rightMaxPct}%"></div>
-                        <div class="disp-avg-l" style="background:#228B22;right:50%;width:${leftAvgPct}%"></div>
-                        <div class="disp-avg-r" style="background:#228B22;left:50%;width:${rightAvgPct}%"></div>
+                        <div class="disp-max-l" style="background:#ffcccc;right:50%;width:${leftMaxPct}%"></div>
+                        <div class="disp-max-r" style="background:#ccccff;left:50%;width:${rightMaxPct}%"></div>
+                        <div class="disp-avg-l" style="background:#ff0000;right:50%;width:${leftAvgPct}%"></div>
+                        <div class="disp-avg-r" style="background:#0000ff;left:50%;width:${rightAvgPct}%"></div>
                         <div class="disp-label" style="color:${biasColor}">
                             ${conv(stats.leftAvg)}${unit} ← ${biasLabel} → ${conv(stats.rightAvg)}${unit}
                         </div>
