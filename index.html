@@ -676,6 +676,12 @@
             let biasLabel = 'STRAIGHT';
 ```
 
+When it opens, you'll see the broken lines with backticks and "Change it to:". 
+
+**Delete everything on lines 677-683** and replace with just this ONE line:
+```
+                            ${stats.leftCount} ← ${stats.leftPct}% ← ${biasLabel} → ${stats.rightPct}% → ${stats.rightCount}```
+
 When nano opens, find the line that says:
 ```
 ${conv(stats.leftAvg)}${unit} ← ${biasLabel} → ${conv(stats.rightAvg)}${unit}
