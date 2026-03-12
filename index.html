@@ -674,7 +674,16 @@
             else if (diff >= 12) biasColor = '#FF9800';
             
             let biasLabel = 'STRAIGHT';
-            if (stats.leftPct > stats.rightPct + 5) biasLabel = 'BIAS L';
+```
+
+When nano opens, find the line that says:
+```
+${conv(stats.leftAvg)}${unit} ← ${biasLabel} → ${conv(stats.rightAvg)}${unit}
+```
+
+Change it to:
+```
+${stats.leftCount} ← ${stats.leftPct}% ← ${biasLabel} → ${stats.rightPct}% → ${stats.rightCount}            if (stats.leftPct > stats.rightPct + 5) biasLabel = 'BIAS L';
             if (stats.rightPct > stats.leftPct + 5) biasLabel = 'BIAS R';
             
             return `
