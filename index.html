@@ -674,22 +674,7 @@
             else if (diff >= 12) biasColor = '#FF9800';
             
             let biasLabel = 'STRAIGHT';
-```
-
-When it opens, you'll see the broken lines with backticks and "Change it to:". 
-
-**Delete everything on lines 677-683** and replace with just this ONE line:
-```
-                            ${stats.leftCount} ← ${stats.leftPct}% ← ${biasLabel} → ${stats.rightPct}% → ${stats.rightCount}```
-
-When nano opens, find the line that says:
-```
-${conv(stats.leftAvg)}${unit} ← ${biasLabel} → ${conv(stats.rightAvg)}${unit}
-```
-
-Change it to:
-```
-${stats.leftCount} ← ${stats.leftPct}% ← ${biasLabel} → ${stats.rightPct}% → ${stats.rightCount}            if (stats.leftPct > stats.rightPct + 5) biasLabel = 'BIAS L';
+            if (stats.leftPct > stats.rightPct + 5) biasLabel = 'BIAS L';
             if (stats.rightPct > stats.leftPct + 5) biasLabel = 'BIAS R';
             
             return `
@@ -700,7 +685,7 @@ ${stats.leftCount} ← ${stats.leftPct}% ← ${biasLabel} → ${stats.rightPct}%
                         <div class="disp-avg-l" style="background:#ff0000;right:50%;width:${leftAvgPct}%"></div>
                         <div class="disp-avg-r" style="background:#0000ff;left:50%;width:${rightAvgPct}%"></div>
                         <div class="disp-label" style="color:${biasColor}">
-                            ${conv(stats.leftAvg)}${unit} ← ${biasLabel} → ${conv(stats.rightAvg)}${unit}
+                            ${stats.leftCount} ← ${stats.leftPct}% ← ${biasLabel} → ${stats.rightPct}% → ${stats.rightCount}
                         </div>
                     </div>
                 </div>
