@@ -685,7 +685,7 @@
                         <div class="disp-avg-l" style="background:#ff0000;right:50%;width:${leftAvgPct}%"></div>
                         <div class="disp-avg-r" style="background:#0000ff;left:50%;width:${rightAvgPct}%"></div>
                         <div class="disp-label" style="color:${biasColor}">
-                            ${stats.leftCount} ← ${stats.leftPct}% ← ${biasLabel} → ${stats.rightPct}% → ${stats.rightCount}
+                            ${conv(stats.leftAvg)}${unit} ← ${stats.leftPct}% ← ${biasLabel} → ${stats.rightPct}% → ${conv(stats.rightAvg)}${unit}
                         </div>
                     </div>
                 </div>
