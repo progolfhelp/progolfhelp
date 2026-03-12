@@ -28,300 +28,104 @@
             width: 100%;
             box-shadow: 0 8px 24px rgba(0,0,0,0.12);
         }
-        .auth-logo {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-        .auth-logo img {
-            width: 80px;
-            height: 80px;
-            border-radius: 20px;
-            margin-bottom: 16px;
-        }
-        .auth-logo h1 {
-            font-size: 24px;
-            color: #1a5c28;
-            font-weight: 700;
-        }
-        .auth-tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 24px;
-        }
+        .auth-logo { text-align: center; margin-bottom: 32px; }
+        .auth-logo img { width: 80px; height: 80px; border-radius: 20px; margin-bottom: 16px; }
+        .auth-logo h1 { font-size: 24px; color: #1a5c28; font-weight: 700; }
+        .auth-tabs { display: flex; gap: 8px; margin-bottom: 24px; }
         .auth-tab {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            background: #f0f0f0;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 14px;
-            transition: all 0.2s;
+            flex: 1; padding: 12px; border: none; background: #f0f0f0;
+            border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; transition: all 0.2s;
         }
-        .auth-tab.active {
-            background: #1a5c28;
-            color: white;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            font-size: 13px;
-            text-transform: uppercase;
-            color: #333;
-        }
-        .form-input {
-            width: 100%;
-            padding: 14px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border 0.2s;
-        }
-        .form-input:focus {
-            outline: none;
-            border-color: #1a5c28;
-        }
+        .auth-tab.active { background: #1a5c28; color: white; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 13px; text-transform: uppercase; color: #333; }
+        .form-input { width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px; transition: border 0.2s; }
+        .form-input:focus { outline: none; border-color: #1a5c28; }
         .btn-primary {
-            width: 100%;
-            padding: 16px;
-            background: #1a5c28;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s;
-            text-transform: uppercase;
+            width: 100%; padding: 16px; background: #1a5c28; color: white; border: none;
+            border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.2s; text-transform: uppercase;
         }
-        .btn-primary:hover {
-            background: #0e3518;
-        }
-        .auth-msg {
-            margin-top: 16px;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            text-align: center;
-            display: none;
-        }
-        .auth-msg.error {
-            display: block;
-            background: #fee;
-            color: #c00;
-        }
-        .auth-msg.success {
-            display: block;
-            background: #efe;
-            color: #060;
-        }
-        #app-screen {
-            display: none;
-            flex-direction: column;
-            min-height: 100vh;
-        }
+        .btn-primary:hover { background: #0e3518; }
+        .auth-msg { margin-top: 16px; padding: 12px; border-radius: 8px; font-size: 14px; text-align: center; display: none; }
+        .auth-msg.error { display: block; background: #fee; color: #c00; }
+        .auth-msg.success { display: block; background: #efe; color: #060; }
+        #app-screen { display: none; flex-direction: column; min-height: 100vh; }
         .topbar {
             background: linear-gradient(135deg, #1a5c28, #0e3518);
-            color: white;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
+            color: white; padding: 16px; display: flex; align-items: center;
+            justify-content: space-between; flex-wrap: wrap; gap: 12px;
         }
-        .topbar-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .topbar-brand img {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
-        }
-        .topbar-title {
-            font-size: 20px;
-            font-weight: 700;
-        }
-        .topbar-actions {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .user-email {
-            font-size: 13px;
-            opacity: 0.9;
-        }
-        .unit-toggle {
-            display: flex;
-            gap: 4px;
-        }
+        .topbar-brand { display: flex; align-items: center; gap: 12px; }
+        .topbar-brand img { width: 44px; height: 44px; border-radius: 10px; }
+        .topbar-title { font-size: 20px; font-weight: 700; }
+        .topbar-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .user-email { font-size: 13px; opacity: 0.9; }
+        .unit-toggle { display: flex; gap: 4px; }
         .unit-btn {
-            padding: 8px 14px;
-            border: 1px solid rgba(255,255,255,0.3);
-            background: transparent;
-            color: white;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            transition: all 0.2s;
+            padding: 8px 14px; border: 1px solid rgba(255,255,255,0.3); background: transparent;
+            color: white; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s;
         }
-        .unit-btn.active {
-            background: white;
-            color: #1a5c28;
-        }
+        .unit-btn.active { background: white; color: #1a5c28; }
         .btn-sm {
-            padding: 8px 16px;
-            border: 1px solid rgba(255,255,255,0.3);
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            transition: all 0.2s;
+            padding: 8px 16px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1);
+            color: white; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s;
         }
-        .btn-sm:hover {
-            background: rgba(255,255,255,0.2);
-        }
-        .btn-delete {
-            background: #d32f2f !important;
-            border-color: #d32f2f !important;
-        }
-        .main-content {
-            flex: 1;
-            padding: 20px;
-            max-width: 1000px;
-            margin: 0 auto;
-            width: 100%;
-        }
+        .btn-sm:hover { background: rgba(255,255,255,0.2); }
+        .btn-delete { background: #d32f2f !important; border-color: #d32f2f !important; }
+        .main-content { flex: 1; padding: 20px; max-width: 1000px; margin: 0 auto; width: 100%; }
         .legend {
+            background: white; padding: 16px; border-radius: 10px; margin-bottom: 20px;
+            display: flex; gap: 20px; flex-wrap: wrap; font-size: 14px;
+        }
+        .legend-item { display: flex; align-items: center; gap: 8px; }
+        .legend-box { width: 24px; height: 16px; border-radius: 4px; }
+
+        /* Scrollable table wrapper - key fix */
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
             background: white;
-            padding: 16px;
             border-radius: 10px;
-            margin-bottom: 20px;
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            font-size: 14px;
-        }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .legend-box {
-            width: 24px;
-            height: 16px;
-            border-radius: 4px;
+            margin-bottom: 24px;
         }
         table {
             width: 100%;
+            min-width: 680px;
             background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 24px;
+            border-collapse: collapse;
             table-layout: fixed;
         }
-        thead {
-            background: #f5f5f5;
-        }
+        thead { background: #f5f5f5; }
         th {
-            padding: 12px 10px;
-            text-align: left;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: #666;
+            padding: 12px 10px; text-align: left; font-size: 12px;
+            font-weight: 700; text-transform: uppercase; color: #666; white-space: nowrap;
         }
         th:nth-child(1), td:nth-child(1) { width: 140px; }
-        th:nth-child(2), td:nth-child(2) { width: 70px; }
-        th:nth-child(3), td:nth-child(3) { width: 70px; }
-        th:nth-child(4), td:nth-child(4) { width: 70px; }
-        th:nth-child(5), td:nth-child(5) { width: 70px; }
-        th:nth-child(6), td:nth-child(6) { width: auto; }
-        td {
-            padding: 12px 10px;
-            border-top: 1px solid #eee;
-            font-size: 14px;
-        }
-        td:nth-child(1) select {
-            width: 100%;
-            min-width: 120px;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-        select, input[type="number"] {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-            width: 100%;
-        }
-        .disp-container {
-            position: relative;
-            height: 36px;
-            display: flex;
-            align-items: center;
-        }
-        .disp-bar {
-            position: relative;
-            height: 100%;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .disp-max-l, .disp-max-r, .disp-avg-l, .disp-avg-r {
-            position: absolute;
-            height: 100%;
-        }
+        th:nth-child(2), td:nth-child(2) { width: 72px; }
+        th:nth-child(3), td:nth-child(3) { width: 72px; }
+        th:nth-child(4), td:nth-child(4) { width: 72px; }
+        th:nth-child(5), td:nth-child(5) { width: 72px; }
+        th:nth-child(6), td:nth-child(6) { width: 260px; }
+        td { padding: 10px; border-top: 1px solid #eee; font-size: 14px; }
+        td:nth-child(1) select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+        input[type="number"] { padding: 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; width: 100%; }
+
+        .disp-container { position: relative; height: 36px; display: flex; align-items: center; }
+        .disp-bar { position: relative; height: 100%; width: 100%; display: flex; align-items: center; justify-content: center; }
+        .disp-max-l, .disp-max-r, .disp-avg-l, .disp-avg-r { position: absolute; height: 100%; }
         .disp-max-l, .disp-max-r { opacity: 0.3; }
         .disp-avg-l, .disp-avg-r { opacity: 0.7; }
         .disp-label {
-            position: relative;
-            z-index: 2;
-            font-size: 11px;
-            font-weight: 700;
-            background: white;
-            padding: 4px 10px;
-            border-radius: 4px;
-            white-space: nowrap;
+            position: relative; z-index: 2; font-size: 11px; font-weight: 700;
+            background: white; padding: 4px 8px; border-radius: 4px; white-space: nowrap;
         }
-        .overview {
-            background: white;
-            border-radius: 10px;
-            padding: 24px;
-            margin-top: 24px;
-        }
-        .overview h2 {
-            margin-bottom: 20px;
-            font-size: 20px;
-            color: #1a5c28;
-        }
+        .overview { background: white; border-radius: 10px; padding: 24px; margin-top: 24px; }
+        .overview h2 { margin-bottom: 20px; font-size: 20px; color: #1a5c28; }
         #toast {
-            position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #1a5c28;
-            color: white;
-            padding: 14px 28px;
-            border-radius: 10px;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
-            display: none;
-            z-index: 1000;
-            font-weight: 600;
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+            background: #1a5c28; color: white; padding: 14px 28px; border-radius: 10px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.3); display: none; z-index: 1000; font-weight: 600;
         }
     </style>
 </head>
@@ -385,19 +189,21 @@
                 </div>
             </div>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>CLUB</th>
-                        <th>LEN</th>
-                        <th>MAX</th>
-                        <th>L</th>
-                        <th>R</th>
-                        <th>DISPERSION ← · →</th>
-                    </tr>
-                </thead>
-                <tbody id="tbody"></tbody>
-            </table>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>CLUB</th>
+                            <th>LEN</th>
+                            <th>MAX</th>
+                            <th>L</th>
+                            <th>R</th>
+                            <th>DISPERSION ← · →</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody"></tbody>
+                </table>
+            </div>
 
             <div class="overview">
                 <h2>Dispersion Overview</h2>
@@ -428,24 +234,15 @@
 
         function initClubData() {
             clubData = Array.from({length: 13}, (_, i) => ({
-                id: i,
-                club: 'Select',
-                len: 0,
-                max: 0,
-                leftShots: [],
-                rightShots: []
+                id: i, club: 'Select', len: 0, max: 0, leftShots: [], rightShots: []
             }));
         }
         initClubData();
 
         (async function init() {
             const {data:{session}} = await sb.auth.getSession();
-            if (session) {
-                currentUser = session.user;
-                await showApp();
-            } else {
-                showAuth();
-            }
+            if (session) { currentUser = session.user; await showApp(); }
+            else { showAuth(); }
         })();
 
         function showAuth() {
@@ -464,18 +261,9 @@
 
         function switchTab(mode) {
             authMode = mode;
-            const loginBtn = document.getElementById('btn-login');
-            const signupBtn = document.getElementById('btn-signup');
-            const submitBtn = document.getElementById('auth-submit');
-            if (mode === 'login') {
-                loginBtn.classList.add('active');
-                signupBtn.classList.remove('active');
-                submitBtn.textContent = 'LOGIN';
-            } else {
-                signupBtn.classList.add('active');
-                loginBtn.classList.remove('active');
-                submitBtn.textContent = 'SIGN UP';
-            }
+            document.getElementById('btn-login').classList.toggle('active', mode === 'login');
+            document.getElementById('btn-signup').classList.toggle('active', mode === 'signup');
+            document.getElementById('auth-submit').textContent = mode === 'login' ? 'LOGIN' : 'SIGN UP';
             document.getElementById('auth-msg').className = 'auth-msg';
         }
 
@@ -483,12 +271,9 @@
             e.preventDefault();
             const email = document.getElementById('auth-email').value;
             const password = document.getElementById('auth-password').value;
-            let result;
-            if (authMode === 'login') {
-                result = await sb.auth.signInWithPassword({email, password});
-            } else {
-                result = await sb.auth.signUp({email, password});
-            }
+            let result = authMode === 'login'
+                ? await sb.auth.signInWithPassword({email, password})
+                : await sb.auth.signUp({email, password});
             if (result.error) {
                 showMsg(result.error.message, 'error');
             } else {
@@ -521,9 +306,7 @@
                 alert('Account deleted successfully');
                 currentUser = null;
                 showAuth();
-            } catch (e) {
-                alert('Error: ' + e.message);
-            }
+            } catch (e) { alert('Error: ' + e.message); }
         }
 
         function setUnit(u) {
@@ -539,7 +322,7 @@
         }
 
         async function loadData() {
-            const {data, error} = await sb.from('club_data').select('*').eq('user_id', currentUser.id).single();
+            const {data} = await sb.from('club_data').select('*').eq('user_id', currentUser.id).single();
             if (data && data.rows_json) {
                 if (data.unit) {
                     unit = data.unit;
@@ -558,19 +341,10 @@
                             rightShots: row.rightShots || []
                         }));
                         while (clubData.length < 13) {
-                            clubData.push({
-                                id: clubData.length,
-                                club: 'Select',
-                                len: 0,
-                                max: 0,
-                                leftShots: [],
-                                rightShots: []
-                            });
+                            clubData.push({id: clubData.length, club: 'Select', len: 0, max: 0, leftShots: [], rightShots: []});
                         }
                     }
-                } catch (e) {
-                    console.error('Parse error:', e);
-                }
+                } catch (e) { console.error('Parse error:', e); }
             }
         }
 
@@ -615,10 +389,10 @@
                 const dispHtml = renderDispersionBar(stats);
                 tr.innerHTML =
                     '<td>' + clubSelect + '</td>' +
-                    '<td><input type="number" value="' + (row.len||'') + '" onchange="updateVal(' + i + ',\'len\',this.value)" style="width:56px"></td>' +
-                    '<td><input type="number" value="' + (row.max||'') + '" onchange="updateVal(' + i + ',\'max\',this.value)" style="width:56px"></td>' +
-                    '<td><input type="number" placeholder="0" onkeypress="if(event.key===\'Enter\'){addShot(' + i + ',\'left\',this.value);this.value=\'\';}" style="width:56px"></td>' +
-                    '<td><input type="number" placeholder="0" onkeypress="if(event.key===\'Enter\'){addShot(' + i + ',\'right\',this.value);this.value=\'\';}" style="width:56px"></td>' +
+                    '<td><input type="number" value="' + (row.len||'') + '" onchange="updateVal(' + i + ',\'len\',this.value)"></td>' +
+                    '<td><input type="number" value="' + (row.max||'') + '" onchange="updateVal(' + i + ',\'max\',this.value)"></td>' +
+                    '<td><input type="number" placeholder="0" onkeypress="if(event.key===\'Enter\'){addShot(' + i + ',\'left\',this.value);this.value=\'\';}"></td>' +
+                    '<td><input type="number" placeholder="0" onkeypress="if(event.key===\'Enter\'){addShot(' + i + ',\'right\',this.value);this.value=\'\';}"></td>' +
                     '<td>' + dispHtml + '</td>';
                 tbody.appendChild(tr);
             });
