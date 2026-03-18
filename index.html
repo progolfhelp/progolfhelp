@@ -1,3 +1,5 @@
+cd ~/Desktop/progolfhelp-ios-v2/www
+cat > index.html << 'ENDHTML'
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -79,8 +81,6 @@
         }
         .legend-item { display: flex; align-items: center; gap: 8px; }
         .legend-box { width: 24px; height: 16px; border-radius: 4px; }
-
-        /* Scrollable table wrapper - key fix */
         .table-wrapper {
             width: 100%;
             overflow-x: auto;
@@ -110,7 +110,6 @@
         td { padding: 10px; border-top: 1px solid #eee; font-size: 14px; }
         td:nth-child(1) select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
         input[type="number"] { padding: 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; width: 100%; }
-
         .disp-container { position: relative; height: 36px; display: flex; align-items: center; }
         .disp-bar { position: relative; height: 100%; width: 100%; display: flex; align-items: center; justify-content: center; }
         .disp-max-l, .disp-max-r, .disp-avg-l, .disp-avg-r { position: absolute; height: 100%; }
@@ -220,6 +219,7 @@
         const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBnYmF1Z2VvbXZrb29mamdoc2RzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzExNzA0NzIsImV4cCI6MjA4Njc0NjQ3Mn0.MrwAXZXx8MMTO0rJ9V3sQdi_uzDesyrMA9JhFDgP4SE';
         const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
 
+        const MAX_ROWS = 13;
         let currentUser = null;
         let authMode = 'login';
         let unit = 'm';
@@ -233,7 +233,7 @@
         ];
 
         function initClubData() {
-            clubData = Array.from({length: 13}, (_, i) => ({
+            clubData = Array.from({length: MAX_ROWS}, (_, i) => ({
                 id: i, club: 'Select', len: 0, max: 0, leftShots: [], rightShots: []
             }));
         }
@@ -301,12 +301,24 @@
         async function deleteAccount() {
             if (!confirm('Delete your account and all data? This cannot be undone.')) return;
             try {
+                // Delete club data first
                 await sb.from('club_data').delete().eq('user_id', currentUser.id);
+                // Delete the auth user via RPC
+                const {error} = await sb.rpc('delete_user');
+                if (error) throw error;
                 await sb.auth.signOut();
+                initClubData();
                 alert('Account deleted successfully');
                 currentUser = null;
                 showAuth();
-            } catch (e) { alert('Error: ' + e.message); }
+            } catch (e) {
+                // Fallback: just sign out and clear data even if user delete fails
+                await sb.auth.signOut();
+                initClubData();
+                currentUser = null;
+                showAuth();
+                alert('Signed out. Contact support to fully remove your account if needed.');
+            }
         }
 
         function setUnit(u) {
@@ -332,7 +344,9 @@
                 try {
                     const loaded = JSON.parse(data.rows_json);
                     if (Array.isArray(loaded)) {
-                        clubData = loaded.slice(0, 13).map((row, i) => ({
+                        // Hard cap: always take only first MAX_ROWS entries
+                        const trimmed = loaded.slice(0, MAX_ROWS);
+                        clubData = trimmed.map((row, i) => ({
                             id: i,
                             club: row.club || 'Select',
                             len: row.len || 0,
@@ -340,8 +354,13 @@
                             leftShots: row.leftShots || [],
                             rightShots: row.rightShots || []
                         }));
-                        while (clubData.length < 13) {
+                        // Pad up to MAX_ROWS if fewer rows saved
+                        while (clubData.length < MAX_ROWS) {
                             clubData.push({id: clubData.length, club: 'Select', len: 0, max: 0, leftShots: [], rightShots: []});
+                        }
+                        // If loaded data had more than MAX_ROWS, save back the trimmed version immediately
+                        if (loaded.length > MAX_ROWS) {
+                            await saveData();
                         }
                     }
                 } catch (e) { console.error('Parse error:', e); }
@@ -350,9 +369,11 @@
 
         async function saveData() {
             try {
+                // Always enforce MAX_ROWS before saving
+                const toSave = clubData.slice(0, MAX_ROWS);
                 const payload = {
                     user_id: currentUser.id,
-                    rows_json: JSON.stringify(clubData),
+                    rows_json: JSON.stringify(toSave),
                     unit: unit
                 };
                 const {error} = await sb.from('club_data').upsert(payload, {onConflict: 'user_id'});
@@ -380,7 +401,8 @@
         function renderTable() {
             const tbody = document.getElementById('tbody');
             tbody.innerHTML = '';
-            clubData.forEach((row, i) => {
+            // Always render exactly MAX_ROWS
+            clubData.slice(0, MAX_ROWS).forEach((row, i) => {
                 const tr = document.createElement('tr');
                 const clubSelect = '<select onchange="updateClub(' + i + ', this.value)">' +
                     ALL_CLUBS.map(c => '<option value="' + c + '" ' + (row.club===c?'selected':'') + '>' + c + '</option>').join('') +
@@ -449,7 +471,7 @@
 
         function renderOverview() {
             const container = document.getElementById('overview-graph');
-            const withData = clubData.filter(r => r.club !== 'Select' && ((r.leftShots ? r.leftShots.length : 0) + (r.rightShots ? r.rightShots.length : 0) > 0));
+            const withData = clubData.slice(0, MAX_ROWS).filter(r => r.club !== 'Select' && ((r.leftShots ? r.leftShots.length : 0) + (r.rightShots ? r.rightShots.length : 0) > 0));
             if (withData.length === 0) {
                 container.innerHTML = '<p style="color:#999;text-align:center;padding:20px">No shot data yet.</p>';
                 return;
@@ -463,3 +485,4 @@
     </script>
 </body>
 </html>
+ENDHTML
