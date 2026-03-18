@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -196,7 +195,7 @@
                             <th>MAX</th>
                             <th>L</th>
                             <th>R</th>
-                            <th>DISPERSION ← · →</th>
+                            <th>DISPERSION</th>
                         </tr>
                     </thead>
                     <tbody id="tbody"></tbody>
@@ -300,9 +299,7 @@
         async function deleteAccount() {
             if (!confirm('Delete your account and all data? This cannot be undone.')) return;
             try {
-                // Delete club data first
                 await sb.from('club_data').delete().eq('user_id', currentUser.id);
-                // Delete the auth user via RPC
                 const {error} = await sb.rpc('delete_user');
                 if (error) throw error;
                 await sb.auth.signOut();
@@ -311,12 +308,10 @@
                 currentUser = null;
                 showAuth();
             } catch (e) {
-                // Fallback: just sign out and clear data even if user delete fails
                 await sb.auth.signOut();
                 initClubData();
                 currentUser = null;
                 showAuth();
-                alert('Signed out. Contact support to fully remove your account if needed.');
             }
         }
 
@@ -343,9 +338,7 @@
                 try {
                     const loaded = JSON.parse(data.rows_json);
                     if (Array.isArray(loaded)) {
-                        // Hard cap: always take only first MAX_ROWS entries
-                        const trimmed = loaded.slice(0, MAX_ROWS);
-                        clubData = trimmed.map((row, i) => ({
+                        clubData = loaded.slice(0, MAX_ROWS).map((row, i) => ({
                             id: i,
                             club: row.club || 'Select',
                             len: row.len || 0,
@@ -353,11 +346,9 @@
                             leftShots: row.leftShots || [],
                             rightShots: row.rightShots || []
                         }));
-                        // Pad up to MAX_ROWS if fewer rows saved
                         while (clubData.length < MAX_ROWS) {
                             clubData.push({id: clubData.length, club: 'Select', len: 0, max: 0, leftShots: [], rightShots: []});
                         }
-                        // If loaded data had more than MAX_ROWS, save back the trimmed version immediately
                         if (loaded.length > MAX_ROWS) {
                             await saveData();
                         }
@@ -368,11 +359,9 @@
 
         async function saveData() {
             try {
-                // Always enforce MAX_ROWS before saving
-                const toSave = clubData.slice(0, MAX_ROWS);
                 const payload = {
                     user_id: currentUser.id,
-                    rows_json: JSON.stringify(toSave),
+                    rows_json: JSON.stringify(clubData.slice(0, MAX_ROWS)),
                     unit: unit
                 };
                 const {error} = await sb.from('club_data').upsert(payload, {onConflict: 'user_id'});
@@ -380,7 +369,6 @@
                 showToast('Saved!');
             } catch (e) {
                 showToast('Error saving: ' + e.message);
-                console.error('Save error:', e);
             }
         }
 
@@ -400,7 +388,6 @@
         function renderTable() {
             const tbody = document.getElementById('tbody');
             tbody.innerHTML = '';
-            // Always render exactly MAX_ROWS
             clubData.slice(0, MAX_ROWS).forEach((row, i) => {
                 const tr = document.createElement('tr');
                 const clubSelect = '<select onchange="updateClub(' + i + ', this.value)">' +
@@ -464,7 +451,7 @@
                 '<div class="disp-avg-l" style="background:#ff0000;right:50%;width:' + leftAvgPct + '%"></div>' +
                 '<div class="disp-avg-r" style="background:#0000ff;left:50%;width:' + rightAvgPct + '%"></div>' +
                 '<div class="disp-label" style="color:' + biasColor + '">' +
-                conv(stats.leftAvg) + unit + ' \u2190 ' + stats.leftPct + '% \u2190 ' + biasLabel + ' \u2192 ' + stats.rightPct + '% \u2192 ' + conv(stats.rightAvg) + unit +
+                conv(stats.leftAvg) + unit + ' &larr; ' + stats.leftPct + '% &larr; ' + biasLabel + ' &rarr; ' + stats.rightPct + '% &rarr; ' + conv(stats.rightAvg) + unit +
                 '</div></div></div>';
         }
 
@@ -484,4 +471,3 @@
     </script>
 </body>
 </html>
-
